@@ -11,10 +11,7 @@ class CreditScene extends Phaser.Scene {
 
         // this.load.atlas("Yoosung", "gifyoosungooh.gif", "gifyoosungooh.JSON");
         //this.load.image("Yoosung","gifyoosungooh.gif");
-        this.load.spritesheet("sheet", "ToiletTalk-SpriteSheet.png", {
-        frameWidth: 2388,
-        frameHeight: 1668
-        });
+        this.load.spritesheet("sheet", "ToiletTalk-SpriteSheet.png", {frameWidth: 128, frameHeight: 90});
     }
 
     create() {
@@ -25,8 +22,8 @@ class CreditScene extends Phaser.Scene {
             repeat: 1
         });
 
-        let ToiletLogo = this.add.sprite(400, 300, "sheet");
-
+        let ToiletLogo = this.add.sprite(400, 300, "sheet",{x: 200, y: 200});
+        ToiletLogo.setDisplaySize(500,500);
         ToiletLogo.play("animation");
     }
 
