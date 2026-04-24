@@ -14,7 +14,11 @@ class CreditScene extends Phaser.Scene {
 	}
 
 	create() {
+		this.graphics = this.add.graphics();
+		this.graphics.fillStyle(0xFFFFFF, 1);
+		this.bg = this.graphics.fillRect(0, 0, 800, 600);
 		
+
 		this.ToiletTalk = this.add.video(400,300,"ToiletTalkVid");
 		this.ToiletTalk.setScale(0.9);
 		this.ToiletTalk.alpha = 0;
@@ -110,7 +114,16 @@ class CreditScene extends Phaser.Scene {
 			repeat: 0
 		});
 
-		this.timer = this.time.delayedCall(1/*6000*/, this.scene.start, ["menuScene"], this.scene);
+		//sceneOutro
+		this.tweens.add({
+			targets: this.bg,
+			delay: 16000,
+			alpha: { from: 1, to: 0 },
+			duration: 2000,
+			ease: "Sine.Out",
+			repeat: 0
+		});
+		this.timer = this.time.delayedCall(2/*20000*/, this.scene.start, ["menuScene"], this.scene);
 	}
 
 	update() {
@@ -139,17 +152,6 @@ class MenuScene extends Phaser.Scene {
 		);
 
 		this.graphics = this.add.graphics();
-		this.graphics.fillStyle(0x000000, 1);
-
-		this.bg = this.graphics.fillRect(0, 0, 800, 600);
-		this.bg.alpha = 0;
-		this.sceneIntro = this.tweens.add({
-			targets: this.bg,
-			alpha: {from: 0, to: 1},
-			duration: 2000,
-			ease: "Sine.Out",
-			repeat: 0
-		});
 
 		this.menuBGM = this.sound.add("mainBGM",{repeat: -1});
 		this.sound.stopAll();
@@ -161,10 +163,12 @@ class MenuScene extends Phaser.Scene {
 
 
 		this.graphics.lineStyle(5, "0xffffff", 1);
-		this.graphics.lineBetween(this.title.x, this.title.y + this.title.height, (this.title.x + this.title.width), this.title.y + this.title.height);
+		this.selectLine = this.graphics.lineBetween(this.title.x, this.title.y + this.title.height, (this.title.x + this.title.width), this.title.y + this.title.height);
+		//this.selectLine.setOrigin(this.title.x, this.title.y + this.title.height);
 
 		this.menuSelect = this.sound.add("menuSelect");
 
+		//Play Button
 		this.playButton = this.add.text(400, 200, "Play", { font: "50px Arial", color: "#ffffff" });
 		this.playButton.x = 400 - this.playButton.width/2;
 		this.playButton.setInteractive({useHandCursor: true});
@@ -172,19 +176,37 @@ class MenuScene extends Phaser.Scene {
 		{
 			this.menuSelect.play();
 			this.menuBGM.stop();
-			this.time.delayedCall(500,this.scene.start,["creditScene"],this.scene);
+			this.time.delayedCall(500,this.scene.start,["storyScene"],this.scene);
 		});
 		this.playButton.on("pointerover", () => {
 			this.playButton.setFontStyle("italic");
 			this.playButton.setPadding({right: 2});
 			this.playButton.x = 400 - this.playButton.width / 2;
+
+			// this.tweens.add({
+			// 	targets: this.selectLine,
+			// 	x: this.playButton.x,
+			// 	y: this.playButton.y + this.playButton.height/2,
+			// 	ease: "ease.InOut",
+			// 	displayWidth: this.playButton.width
+				
+			// });
 		});
 		this.playButton.on("pointerout", () => {
 			this.playButton.setFontStyle("");
 			this.playButton.setPadding({right: 0});
 			this.playButton.x = 400 - this.playButton.width / 2;
+
+			// this.tweens.add({
+			// 	targets: this.selectLine,
+			// 	x: 0, //this.title.x,
+			// 	y: 0, //this.title.y + this.title.height,
+			// 	ease: "ease.InOut",
+			// 	displayWidth: this.title.width
+			// });
 		});
 
+		// Settings Button
 		this.settingsButton = this.add.text(400, 300, "Settings", { font: "50px Arial", color: "#ffffff" });
 		this.settingsButton.setInteractive({ cursor: "not-allowed" });
 		this.settingsButton.x = 400 - this.settingsButton.width / 2;
@@ -199,6 +221,7 @@ class MenuScene extends Phaser.Scene {
 			this.settingsButton.x = 400 - this.settingsButton.width / 2;
 		});
 
+		//Quit button
 		this.quitButton = this.add.text(400, 400, "Quit", { font: "50px Arial", color: "#ffffff" });
 		this.quitButton.x = 400 - this.quitButton.width / 2;
 		this.quitButton.setInteractive({ useHandCursor: true });
@@ -229,12 +252,133 @@ class MenuScene extends Phaser.Scene {
 	}
 }
 
+
+class StoryScene extends Phaser.Scene {
+	constructor() {
+		super("storyScene");
+	}
+
+	preload() {
+		this.load.path = "assets/";
+		this.load.audio("storyBGM", "toby fox - UNDERTALE Soundtrack - 01 Once Upon a Time.mp3");
+	}
+
+	create() {
+		this.storyBGM = this.sound.add("storyBGM", { repeat: -1 });
+		this.sound.stopAll();
+		this.storyBGM.play();
+
+		this.fadeTime = 3000;
+		this.fadeDelay = 5000;
+
+		//Text objects
+		this.text_lvl1 = this.make.text({
+			x: 100,
+			y: 100,
+			text: "In the land of FantasyWorld you are a royal knight.You have served as the protector of prince Robert for many years.",
+			style: { font: "30px Arial", fill: "#FFFFFF", wordWrap: {width: 600}, align: "center"}
+		});
+		this.text_lvl1.alpha = 0;
+
+		this.text_lvl2 = this.make.text({
+			x: 100,
+			y: this.text_lvl1.y + this.text_lvl1.height*1.5,
+			text: "One day the evil sorceress Serena captures the prince and curses the land to become pixelated and randomly generated.",
+			style: { font: "30px Arial", fill: "#FFFFFF", wordWrap: { width: 600 }, align: "center" }
+		});
+		this.text_lvl2.alpha = 0;
+
+		this.text_lvl3 = this.make.text({
+			x: 100,
+			y: this.text_lvl2.y + this.text_lvl2.height * 1.5,
+			text: "You must rescue the prince before it's too late!",
+			style: { font: "30px Arial", fill: "#FFFFFF", wordWrap: { width: 600 }, align: "center" }
+		});
+		this.text_lvl3.alpha = 0;
+
+		//Tween ins
+		this.tweenIn_lvl1 = this.tweens.add({
+			targets: this.text_lvl1,
+			alpha: { from: 0, to: 1 },
+			duration: this.fadeLength,
+			persist: true,
+			//delay: this.fadeDelay,
+			repeat: 0
+		});
+
+		this.tweenIn_lvl2 = this.tweens.add({
+			targets: this.text_lvl2,
+			alpha: { from: 0, to: 1 },
+			duration: this.fadeLength,
+			persist: true,
+			delay: this.fadeDelay,
+			repeat: 0
+		});
+
+		this.tweenIn_lvl3 = this.tweens.add({
+			targets: this.text_lvl3,
+			alpha: { from: 0, to: 1 },
+			duration: this.fadeLength,
+			persist: true,
+			delay:2*this.fadeDelay,
+			repeat: 0
+		});
+
+		//Tween outs
+		this.tweenOut_lvl1 = this.tweens.add({
+			targets: this.text_lvl1,
+			alpha: { from: 1, to: 0 },
+			duration: this.fadeTime,
+			persist: true,
+			delay: 2 * this.fadeDelay,
+			//ease: "Sine.Out",
+			repeat: 0
+		});
+
+		this.tweenOut_lvl2 = this.tweens.add({
+			targets: this.text_lvl2,
+			alpha: { from: 1, to: 0 },
+			duration: this.fadeTime,
+			persist: true,
+			delay: 3 * this.fadeDelay,
+			//ease: "Sine.Out",
+			repeat: 0
+		});
+
+		this.tweenOut_lvl3 = this.tweens.add({
+			targets: this.text_lvl3,
+			alpha: { from: 1, to: 0 },
+			duration: this.fadeTime,
+			persist: true,
+			delay: 4 * this.fadeDelay,
+			//ease: "Sine.Out",
+			repeat: 0
+		});
+
+		this.time.delayedCall(4.5*this.fadeDelay + this.fadeTime,this.scene.start,["menuScene"],this.scene);
+	}
+
+	update() {	}
+}
+
+/*class EmptyScene extends Phaser.Scene {
+	constructor() {
+		super("emptyScene");
+	}
+
+	preload() {	}
+
+	create() {	}
+
+	update() {	}
+}*/
+
 config = {
 	type: Phaser.WEBGL,
 	width: 800,
 	height: 600,
-	backgroundColor: 0xFFFFFF,
-	scene: [CreditScene,MenuScene]
+	backgroundColor: 0x000000,
+	scene: [CreditScene,MenuScene,StoryScene]
 }
 
 let game = new Phaser.Game(config);
