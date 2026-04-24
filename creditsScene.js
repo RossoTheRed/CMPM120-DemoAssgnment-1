@@ -23,13 +23,6 @@ class IntroScene extends Phaser.Scene {
 		this.ToiletTalk.setScale(0.9);
 		this.ToiletTalk.alpha = 0;
 
-		this.textObject = this.add.text(
-			0,
-			500,
-			"Placeholder",
-			{ font: "40px Arial", color: "#000000" }
-		);
-
 		this.loadIconA = this.add.image(0, 550, "LoadIconA");
 		this.loadIconA.x = 800 - this.loadIconA.width/8;
 		this.loadIconA.setScale(0.5);
@@ -123,13 +116,10 @@ class IntroScene extends Phaser.Scene {
 			ease: "Sine.Out",
 			repeat: 0
 		});
-		this.timer = this.time.delayedCall(2/*20000*/, this.scene.start, [/*"menuScene"*/"creditScene"], this.scene);
+		this.timer = this.time.delayedCall(20000, this.scene.start, ["menuScene"], this.scene);
 	}
 
-	update() {
-		let mouse = this.input.activePointer;
-		this.textObject.text = `Mouse: ${mouse.x},${mouse.y}\nTime Elapsed: ${Math.trunc(this.timer.elapsed)}`;
-	}
+	update() {	}
 }
 
 class MenuScene extends Phaser.Scene {
@@ -144,18 +134,12 @@ class MenuScene extends Phaser.Scene {
 	}
 
 	create() {
-		this.textObject = this.add.text(
-			0,
-			500,
-			"Placeholder",
-			{ font: "40px Arial", color: "#ffffff" }
-		);
-
 		this.graphics = this.add.graphics();
 
-		this.menuBGM = this.sound.add("mainBGM",{repeat: -1});
+		this.menuBGM = this.sound.add("mainBGM", { repeat: -1, config: { volume: 0.25 } });
 		this.sound.stopAll();
 		this.menuBGM.play();
+		this.menuBGM.setVolume(0.25);
 
 		this.title = this.add.text(400, 75, "SerenaGame", { font: "50px Arial", color: "#ffffff"});
 		this.title.x = 400 - this.title.width/2;
@@ -283,10 +267,7 @@ class MenuScene extends Phaser.Scene {
 		
 	}
 
-	update() {
-		let mouse = this.input.activePointer;
-		this.textObject.text = `Mouse: ${mouse.x},${mouse.y}`;
-	}
+	update() {	}
 }
 
 
@@ -303,6 +284,7 @@ class StoryScene extends Phaser.Scene {
 	create() {
 		this.storyBGM = this.sound.add("storyBGM", { repeat: -1 });
 		this.sound.stopAll();
+		this.storyBGM.setVolume(0.25);
 		this.storyBGM.play();
 
 		this.fadeTime = 3000;
@@ -415,9 +397,10 @@ class CreditScene extends Phaser.Scene {
 	create() {
 		this.graphics = this.add.graphics();
 
-		this.menuBGM = this.sound.add("mainBGM", { repeat: -1 });
+		this.menuBGM = this.sound.add("mainBGM", { repeat: -1, config: { volume: 0.25 } });
 		this.sound.stopAll();
 		this.menuBGM.play();
+		this.menuBGM.setVolume(0.25);
 
 		this.title = this.add.text(400, 25, "Project Credits", { font: "50px Arial", color: "#ffffff" });
 		this.title.x = 400 - this.title.width / 2;
