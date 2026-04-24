@@ -231,7 +231,7 @@ class MenuScene extends Phaser.Scene {
 		this.settingsButton = this.add.text(400, 400, "Settings", { font: "50px Arial", color: "#ffffff" });
 		this.settingsButton.setInteractive({ cursor: "not-allowed" });
 		this.settingsButton.x = 400 - this.settingsButton.width / 2;
-		this.settingsButton.on("pointerover", () => {
+		/*this.settingsButton.on("pointerover", () => {
 			this.settingsButton.setFontStyle("italic");
 			this.settingsButton.setPadding({ right: 2 });
 			this.settingsButton.x = 400 - this.settingsButton.width / 2;
@@ -240,7 +240,7 @@ class MenuScene extends Phaser.Scene {
 			this.settingsButton.setFontStyle("");
 			this.settingsButton.setPadding({ right: 0 });
 			this.settingsButton.x = 400 - this.settingsButton.width / 2;
-		});
+		});*/
 
 		//Quit button
 		this.quitButton = this.add.text(400, 500, "Quit", { font: "50px Arial", color: "#ffffff" });
@@ -471,6 +471,14 @@ class CreditScene extends Phaser.Scene {
 			style: { font: "20px Arial", fill: "#FFFFFF", wordWrap: { width: 300 }, align: "center" }
 		});
 
+		this.miscCredit = this.make.text({
+			x: 400,
+			y: 525,
+			text: "All icons downloaded from GoogleFonts.com",
+			style: { font: "20px Arial", fill: "#FFFFFF", wordWrap: { width: 300 }, align: "center" }
+		});
+		this.miscCredit.x = 400 - this.miscCredit.width/2;
+
 		//Quit button
 		this.quitButton = this.add.text(0, 20, "Back", { font: "30px Arial", color: "#ffffff" });
 		this.quitButton.x = 0 + this.quitButton.width / 2;
@@ -495,6 +503,25 @@ class CreditScene extends Phaser.Scene {
 	update() { }
 }
 
+class StartScene extends Phaser.Scene {
+	constructor() {
+		super("startScene");
+	}
+
+	preload() { 
+		this.load.image("playButton","assets/playIcon.png");
+	}
+
+	create() { 
+		this.add.image(400,300,"playButton");
+		this.input.on("pointerdown",() => {
+			this.scene.start("introScene");
+		})
+	}
+
+	update() { }
+}
+
 /*class EmptyScene extends Phaser.Scene {
 	constructor() {
 		super("emptyScene");
@@ -512,7 +539,7 @@ config = {
 	width: 800,
 	height: 600,
 	backgroundColor: 0x000000,
-	scene: [IntroScene,MenuScene,StoryScene,CreditScene]
+	scene: [StartScene,IntroScene,MenuScene,StoryScene,CreditScene]
 }
 
 let game = new Phaser.Game(config);
